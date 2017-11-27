@@ -7,26 +7,28 @@ import csv
 import numpy as np
 import matplotlib.pyplot as plt
 import os
+import pandas as pd
+import re
 
 from numpy import genfromtxt
 from matplotlib.backends.backend_pdf import PdfPages
 
-#directory = u"./data/"
+#directory = u"./dataClean/"
 
-def createDatasetFromFiles(directory = u'./data/', id = -1):
+def createDatasetFromFiles(directory = u'./dataClean/', id = -1):
     j=1
     for path, dirs, files in os.walk(directory):
 
-            print(dirs)
+            #print(dirs)
             apath = path.split(os.sep)
-            print(apath[-1])
+            #print(apath[-1])
 
             # look for the right folder
             if apath[-1] != 'Medidas acelerômetro' \
                and apath[-1] != 'Medidas Acelerometro' \
                and apath[-1] != 'Acelerometro' \
                and apath[-1] != 'Acelerômetro':
-                print("Skip!")
+                #print("Skip!")
                 continue
 
             # sort files
@@ -36,7 +38,27 @@ def createDatasetFromFiles(directory = u'./data/', id = -1):
             for f in files:
                     if f.endswith(".txt"):
                             fname = path + "/" + f
-                            print(fname)
+                      
+                            # identify info
+                            tags = re.split('/',fname)
+                            name = tags[2].title() #participant name
+                            drug = int(tags[3][-2]) # drug taken
+                            evalname = tags[3].split()[0]
+
+                            # convert evaluation name to number
+                            if evalname == "Primeira":
+                                evalno = 1
+                            elif evalname == "Segunda":
+                                evalno = 2
+                            else:
+                                print("Evaluation name does not match 'Primeira' or 'Segunda'")
+                                evalno = 0
+
+                            print(name + " - Drug: " + str(drug) + \
+                                    " - Evaluation: "+ str(evalno) +\
+                                    " - File: " + f)
+
+                            # read file
                             fp = open(fname,'r')
                             data = fp.readlines()[4:1822]
                             matrix = []
