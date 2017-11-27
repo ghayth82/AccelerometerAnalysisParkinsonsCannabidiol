@@ -103,3 +103,11 @@ def plotParticipant(dataf, name, ts=0):
         j = j + 1
 
     fig.show()
+
+
+def saveDataFrame(dataf, filename):
+
+    if filename[-3:] != ".pkl":
+        filename = filename + ".pkl"
+
+    dataf.to_pickle(filename)
