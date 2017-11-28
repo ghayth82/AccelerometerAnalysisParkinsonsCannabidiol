@@ -2,7 +2,6 @@
 # Code for reading files and extract accelerometer features
 #
 # Moacir Ponti / 2017
-# new stuff
 ##
 
 import csv
@@ -97,7 +96,6 @@ def plotParticipant(dataf, name, ts=0):
        :param name: Participant name
        :param ts: Time series 0=accelerometer, 1=gyroscope (default=0)
        """
-
     fig = plt.figure()
 
     j = 1
@@ -106,7 +104,7 @@ def plotParticipant(dataf, name, ts=0):
         ax1.plot(dataf[name][1][j][ts])
         
         ax2 = fig.add_subplot(8,2,i+1)
-        ax2.plot(dataf[name][2][j][ts])
+        ax2.plot(dataf[name][2][j][ts], col=1)
 
         j = j + 1
 
