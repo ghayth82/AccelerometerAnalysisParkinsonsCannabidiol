@@ -2,6 +2,7 @@
 # Code for reading files and extract accelerometer features
 #
 # Moacir Ponti / 2017
+# new stuff
 ##
 
 import csv
