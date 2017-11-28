@@ -3,6 +3,7 @@
 #
 # Moacir Ponti / 2017
 ##
+
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
@@ -89,6 +90,12 @@ def createDatasetFromFiles(directory = u'./dataClean/', id = -1):
                         
 
 def plotParticipant(dataf, name, ts=0):
+    """Plot the 8 measures for a participant
+       given some time series
+       :param dataf: Dataframe where data is stored
+       :param name: Participant name
+       :param ts: Time series 0=accelerometer, 1=gyroscope (default=0)
+       """
 
     fig = plt.figure()
 
@@ -111,3 +118,5 @@ def saveDataFrame(dataf, filename):
         filename = filename + ".pkl"
 
     dataf.to_pickle(filename)
+
+
