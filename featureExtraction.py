@@ -61,5 +61,11 @@ def featuresFromDataframe(df, ts, maxfr=30):
 
 
     return featMat
-    
 
+
+
+def writeMatrixCSV(featMat, filename):
+
+    with open(filename, 'w', newline='\n') as fp:
+        a = csv.writer(fp, delimiter=',')
+        a.writerows(featMat)
