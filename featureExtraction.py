@@ -17,7 +17,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 
 #directory = u"./dataClean/"
 
-def featuresFromDataframe(df, ts, maxfr=30):
+def featuresFromDataframe(df, ts, maxfr=20):
     
     # name/drug/measure/ts-evalno
 
@@ -41,8 +41,9 @@ def featuresFromDataframe(df, ts, maxfr=30):
             # each measure, compute features
             for measure in sorted(df[k][drug]):
 
+                tsS = df[k][drug][measure][ts]
                 # Fourier Transform
-                tsF  = np.fft.fft(df[k][drug][measure][ts])
+                tsF  = np.fft.fft( tsS[10:-10] )
                 # Power Spectrum within Maximum Frequency
                 tfPS = np.abs(tsF[1:maxfr])**2
 
