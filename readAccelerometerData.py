@@ -89,12 +89,13 @@ def createDatasetFromFiles(directory = u'./dataClean/', id = -1):
     return pd.DataFrame(data)
                         
 
-def plotParticipant(dataf, name, ts=0):
+def plotParticipant(dataf, name, ts=0, pdfsave=False):
     """Plot the 8 measures for a participant
        given some time series
        :param dataf: Dataframe where data is stored
        :param name: Participant name
        :param ts: Time series 0=accelerometer, 1=gyroscope (default=0)
+       :param pdfsave: saves PDF file with name (default=False)
        """
     fig = plt.figure()
 
@@ -104,9 +105,15 @@ def plotParticipant(dataf, name, ts=0):
         ax1.plot(dataf[name][1][j][ts])
         
         ax2 = fig.add_subplot(8,2,i+1)
-        ax2.plot(dataf[name][2][j][ts], col=1)
+        ax2.plot(dataf[name][2][j][ts],'r')
 
         j = j + 1
+
+    if pdfsave:
+        filename = name.split()[0].lower() + str(ts) + '.pdf'
+        ppdf = PdfPages(filename)
+        ppdf.savefig(fig)
+        ppdf.close()
 
     fig.show()
 
