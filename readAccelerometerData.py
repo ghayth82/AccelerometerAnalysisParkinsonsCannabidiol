@@ -74,6 +74,10 @@ def createDatasetFromFiles(directory = u'./dataClean/', id = -1):
 
                             ts1 = np.sqrt(matrix[:,0]**2 + matrix[:,2]**2 + matrix[:,2]**2)
                             ts2 = np.sqrt(matrix[:,3]**2 + matrix[:,4]**2 + matrix[:,5]**2)
+				
+			    #data standarization/normalization z-score
+                            ts1 = (ts1 - np.mean(ts1)) / np.std(ts1)
+                            ts2 = (ts2 - np.mean(ts2)) / np.std(ts2)
 
                             if name not in data:
                                 data[name] = {}
@@ -118,6 +122,71 @@ def plotParticipant(dataf, name, ts=0, pdfsave=False):
     fig.show()
 
 
+def butter_lowpass(cutoff, fs, order=5):
+    nyq = 0.5 * fs
+    normal_cutoff = cutoff / nyq
+    b, a = butter(order, normal_cutoff, btype='low', analog=False)
+    return b, a
+
+
+def butter_lowpass_filter(data, cutoff, fs, order=5):
+    b, a = butter_lowpass(cutoff, fs, order=order)
+    y = lfilter(b, a, data)
+    return y
+
+
+def featPFreq( ts, fs, order=6, a=5 ):
+    """Return frequency features
+       :param fs: frequency sampling
+       :param order: Butterworth filter order
+       :param ts: Time series 0=accelerometer, 1=gyroscope (default=0)
+    """
+
+    ts_f = butter_lowpass_filter(ts, fs/5 , fs, order)
+    print(ts_f.size)
+    ts_f = ts_f[a:-a]
+    ts   = ts[a:-a]
+    print(ts_f.size)
+
+    fft_ts = scipy.fft(ts)
+    fft_ts_f = scipy.fft(ts_f)
+    FFT1 = np.square(abs(fft_ts))
+    FFT2 = np.square(abs(fft_ts_f))
+    freqs = scipy.fftpack.fftfreq(ts.size)
+
+    plt.subplot(2,1,1)
+    plt.plot(ts)
+    plt.plot(ts_f)
+
+    plt.subplot(2,1,2)
+    plt.plot(FFT1[2:30])
+    plt.plot(FFT2[2:30])
+    plt.show()
+    
+
+
+def featarticipant(dataf, name, nof=0, ts=0):
+    """Extract features for the 8 measures for a participant
+       given some time series
+       :param dataf: Dataframe where data is stored
+       :param name: Participant name
+       :param nof: Number of features (
+       """
+
+    feats = {}
+    feats[1] = {}
+    feats[2] = {}
+
+    for j in np.arange(1,9):
+        ax1.plot(dataf[name][1][j][ts])
+        ax2.plot(dataf[name][2][j][ts], 'r-')
+
+        feats[1][j] = featPFreq( dataf[name][1][j][ts] )
+        feats[2][j] = featPFreq( dataf[name][2][j][ts] )
+
+    return feats
+
+
 def saveDataFrame(dataf, filename):
 
     if filename[-3:] != ".pkl":
@@ -126,3 +195,8 @@ def saveDataFrame(dataf, filename):
     dataf.to_pickle(filename)
 
 
+
+def loadDataFrame(filename):
+
+    dataf = pd.read_pickle(filename)
+    return dataf
