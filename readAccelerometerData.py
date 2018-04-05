@@ -41,12 +41,12 @@ def createDatasetFromFiles(directory = u'./dataClean/', id = -1):
             for f in files:
                     if f.endswith(".txt"):
                             fname = path + "/" + f
-                      
+
                             # identify info
                             tags = re.split('/',fname)
                             name = tags[2].title() #participant name
                             drug = int(tags[3][-2]) # drug taken
-                            evalname = tags[3].split()[0]
+                            evalname = tags[3].split()[0] 
                             measure = int(f[0])
 
                             # convert evaluation name to number
@@ -72,10 +72,11 @@ def createDatasetFromFiles(directory = u'./dataClean/', id = -1):
 
                             matrix = np.array(matrix)
 
-                            ts1 = np.sqrt(matrix[:,0]**2 + matrix[:,2]**2 + matrix[:,2]**2)
+                            # ts1 = accelerometer; ts2 = gyroscope
+                            ts1 = np.sqrt(matrix[:,0]**2 + matrix[:,1]**2 + matrix[:,2]**2)
                             ts2 = np.sqrt(matrix[:,3]**2 + matrix[:,4]**2 + matrix[:,5]**2)
-				
-			    #data standarization/normalization z-score
+			    
+			    # data standarization/normalization z-score
                             ts1 = (ts1 - np.mean(ts1)) / np.std(ts1)
                             ts2 = (ts2 - np.mean(ts2)) / np.std(ts2)
 
@@ -88,7 +89,7 @@ def createDatasetFromFiles(directory = u'./dataClean/', id = -1):
                             if evalno not in data[name][drug]:
                                 data[name][drug][measure] = {}
 
-                            data[name][drug][measure] = [ts1, ts2]
+                            data[name][drug][measure] = [ts1, ts2, evalno]
 
     return pd.DataFrame(data)
                         
@@ -165,7 +166,7 @@ def featPFreq( ts, fs, order=6, a=5 ):
     
 
 
-def featarticipant(dataf, name, nof=0, ts=0):
+def featParticipant(dataf, name, nof=0, ts=0):
     """Extract features for the 8 measures for a participant
        given some time series
        :param dataf: Dataframe where data is stored
